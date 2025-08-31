@@ -1,0 +1,14 @@
+# Visual Studio cache
+.vs/
+*.vscode/
+bin/
+obj/
+*.user
+*.suo
+
+# Build artifacts
+/build
+/dist
+
+# Other
+*.log
