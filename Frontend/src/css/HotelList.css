@@ -1,0 +1,20 @@
+/* For the star rating */
+.star-rating {
+    letter-spacing: 2px;
+    font-size: 1.1em;
+}
+
+/* For smooth image hover effects */
+.hotel-image {
+    transition: transform 0.3s ease;
+}
+.hotel-image:hover {
+    transform: scale(1.02);
+}
+
+/* For consistent card heights */
+.hotel-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
