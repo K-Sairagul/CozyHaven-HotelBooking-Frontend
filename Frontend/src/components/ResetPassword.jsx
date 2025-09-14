@@ -39,7 +39,7 @@ export default function ResetPassword() {
         setIsLoading(true);
 
         try {
-            const response = await fetch("https://localhost:7274/api/v1/auth/reset-password", {
+            const response = await fetch("https://cozyhavenapi-hccchdhha4c8hjg3.southindia-01.azurewebsites.net/api/v1/auth/reset-password", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

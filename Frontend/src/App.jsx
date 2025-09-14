@@ -38,18 +38,14 @@ function RootRedirect() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  useEffect(() => {
-    console.log("RootRedirect triggered:", location.pathname); 
-    if (location.pathname === "/") {
+  
+ if (location.pathname === "/") {
     if (auth?.token) {
-      navigate('/hotels');
+      return <Navigate to="/landing-page" replace />;
     } else {
-      navigate('/login');
+      return <Navigate to="/landing-page" replace />;
     }
-    }
-  }, [auth,navigate]);
-
-  return null;
+  }
 }
 
 function App() {

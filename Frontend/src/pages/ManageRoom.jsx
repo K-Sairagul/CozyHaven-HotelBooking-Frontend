@@ -14,7 +14,7 @@ export default function ManageRoom() {
         const fetchRoom = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const response = await axios.get(`https://localhost:7274/api/Room/${roomId}`, {
+                const response = await axios.get(`https://cozyhavenapi-hccchdhha4c8hjg3.southindia-01.azurewebsites.net/api/Room/${roomId}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setRoom(response.data);
@@ -37,7 +37,7 @@ export default function ManageRoom() {
         if (window.confirm("Are you sure you want to delete this room?")) {
             try {
                 const token = localStorage.getItem("token");
-                await axios.delete(`https://localhost:7274/api/Room/${roomId}`, {
+                await axios.delete(`https://cozyhavenapi-hccchdhha4c8hjg3.southindia-01.azurewebsites.net/api/Room/${roomId}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 navigate(-1); // Go back to previous page

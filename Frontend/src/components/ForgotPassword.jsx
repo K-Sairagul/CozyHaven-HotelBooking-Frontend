@@ -16,7 +16,7 @@ export default function ForgotPassword() {
         setIsLoading(true);
 
         try {
-            const response = await fetch("https://localhost:7274/api/v1/auth/forgot-password", {
+            const response = await fetch("https://cozyhavenapi-hccchdhha4c8hjg3.southindia-01.azurewebsites.net/api/v1/auth/forgot-password", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

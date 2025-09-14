@@ -40,7 +40,7 @@ function ChangePassword() {
         try {
             setLoading(true);
             const response = await axios.post(
-                'https://localhost:7274/api/v1/auth/change-password',
+                'https://cozyhavenapi-hccchdhha4c8hjg3.southindia-01.azurewebsites.net/api/v1/auth/change-password',
                 {
                     currentPassword: formData.currentPassword,
                     newPassword: formData.newPassword

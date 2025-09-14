@@ -76,47 +76,68 @@ export default function Register() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setApiError('');
-    if (!validate()) return;
-    setIsSubmitting(true);
-    try {
-      const registrationData = {
-        FullName: formData.fullName,
-        Email: formData.email,
-        Password: formData.password,
-        Gender: formData.gender,
-        ContactNumber: formData.contactNumber,
-        Role: formData.role
-      };
-      const response = await fetch('https://localhost:7274/api/v1/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(registrationData)
-      });
+  e.preventDefault();
+  setApiError('');
+  if (!validate()) return;
+  setIsSubmitting(true);
+  
+  try {
+    // Use PascalCase property names to match your backend DTO
+    const registrationData = {
+      FullName: formData.fullName,
+      Email: formData.email,
+      Password: formData.password,
+      Gender: formData.gender,
+      ContactNumber: formData.contactNumber,
+      Role: formData.role
+    };
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        const message = errorData.message || 'Registration failed. Please try again.';
-        throw new Error(message);
-      }
+    console.log("Sending registration data:", registrationData);
 
-      const data = await response.json();
-      if (data === 'User registered successfully!') {
-        setTimeout(() => {
-          navigate('/login');
-        }, 2000);
-      } else {
-        setApiError(data);
+    const response = await fetch('https://cozyhavenapi-hccchdhha4c8hjg3.southindia-01.azurewebsites.net/api/v1/auth/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(registrationData)
+    });
+
+    console.log("Response status:", response.status);
+    
+    const responseText = await response.text();
+    console.log("Raw response:", responseText);
+
+    if (!response.ok) {
+      let errorMessage = 'Registration failed. Please try again.';
+      
+      try {
+        const errorData = JSON.parse(responseText);
+        errorMessage = errorData.message || errorMessage;
+        console.error("Error details:", errorData);
+      } catch {
+        errorMessage = responseText || errorMessage;
       }
-    } catch (error) {
-      setApiError(error.message || 'Registration failed. Please try again.');
-    } finally {
-      setIsSubmitting(false);
+      
+      throw new Error(errorMessage);
     }
-  };
+
+    // Handle successful response
+    if (responseText === 'User registered successfully!' || 
+        responseText.includes('success')) {
+      setTimeout(() => {
+        navigate('/login');
+      }, 2000);
+    } else {
+      setApiError(responseText || 'Registration completed but with unexpected response.');
+    }
+  } catch (error) {
+    console.error("Registration error:", error);
+    setApiError(error.message || 'Network error. Please check your connection and try again.');
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black flex items-center justify-center p-6">

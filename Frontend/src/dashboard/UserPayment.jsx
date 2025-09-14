@@ -24,7 +24,7 @@ const UserPayments = () => {
           return;
         }
 
-        const response = await axios.get(`https://localhost:7274/api/Payment/user/${userId}`, {
+        const response = await axios.get(`https://cozyhavenapi-hccchdhha4c8hjg3.southindia-01.azurewebsites.net/api/Payment/user/${userId}`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -77,7 +77,7 @@ const UserPayments = () => {
       if (!isConfirmed) return;
 
       const response = await axios.put(
-        `https://localhost:7274/api/booking/cancel/${bookingId}`,
+        `https://cozyhavenapi-hccchdhha4c8hjg3.southindia-01.azurewebsites.net/api/booking/cancel/${bookingId}`,
         {},
         {
           headers: {

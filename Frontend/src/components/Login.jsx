@@ -34,7 +34,7 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      const res = await fetch("https://localhost:7274/api/v1/auth/login", {
+      const res = await fetch("https://cozyhavenapi-hccchdhha4c8hjg3.southindia-01.azurewebsites.net/api/v1/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

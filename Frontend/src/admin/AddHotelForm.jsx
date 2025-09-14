@@ -28,7 +28,7 @@ const AddHotelForm = () => {
   useEffect(() => {
     const fetchHotelOwners = async () => {
       try {
-        const res = await axios.get('https://localhost:7274/api/admin/hotelowners', {
+        const res = await axios.get('https://cozyhavenapi-hccchdhha4c8hjg3.southindia-01.azurewebsites.net/api/admin/hotelowners', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setHotelOwners(res.data);
@@ -73,7 +73,7 @@ const AddHotelForm = () => {
 
     try {
       const response = await axios.post(
-        'https://localhost:7274/api/Hotel',
+        'https://cozyhavenapi-hccchdhha4c8hjg3.southindia-01.azurewebsites.net/api/Hotel',
         formData,
         {
           headers: {
@@ -83,7 +83,7 @@ const AddHotelForm = () => {
         }
       );
       setSuccessMessage('Hotel added successfully!');
-      setTimeout(() => navigate('/admin/hotels'), 3000); // Redirect to hotel list
+      setTimeout(() => navigate('/userdashboard/dashboard/allhotels'), 3000); // Redirect to hotel list
     } catch (error) {
       console.error('Error adding hotel:', error);
       setServerError(error.response?.data?.message || 'Failed to add hotel. Please try again.');

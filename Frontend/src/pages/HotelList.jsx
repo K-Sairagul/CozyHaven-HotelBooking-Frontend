@@ -21,6 +21,7 @@ export default function HotelList() {
     const [error, setError] = useState('');
     const [userName, setUserName] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { auth } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
@@ -35,7 +36,7 @@ export default function HotelList() {
 
         const fetchHotels = async () => {
             try {
-                const response = await axios.get('https://localhost:7274/api/Hotel', {
+                const response = await axios.get('https://cozyhavenapi-hccchdhha4c8hjg3.southindia-01.azurewebsites.net/api/Hotel', {
                     headers: {
                         Authorization: `Bearer ${auth.token}`
                     }
@@ -79,7 +80,7 @@ export default function HotelList() {
 
     const handleDelete = async (hotelId) => {
         try {
-            await axios.delete(`https://localhost:7274/api/Hotel/${hotelId}`, {
+            await axios.delete(`https://cozyhavenapi-hccchdhha4c8hjg3.southindia-01.azurewebsites.net/api/Hotel/${hotelId}`, {
                 headers: {
                     Authorization: `Bearer ${auth.token}`
                 }
@@ -98,7 +99,11 @@ export default function HotelList() {
     };
 
     const handleProfileClick = () => {
-        navigate('/userdashboard');
+        navigate('/userdashboard/dashboard/profile');
+    };
+
+    const toggleMobileMenu = () => {
+        setIsMobileMenuOpen(!isMobileMenuOpen);
     };
 
     const renderHotelActions = (hotelId) => {
@@ -200,17 +205,16 @@ export default function HotelList() {
                         <h2 className="text-lg font-bold text-gray-800 mb-1 truncate">{hotel.name}</h2>
                         <p className="text-sm text-gray-600 mb-2">{hotel.location}</p>
                         
-                      
-<div className="flex items-center text-sm text-gray-500 mb-3">
-    <StarRating rating={hotel.rating || 5} size="small" />
-    <span className="mx-1">•</span>
-    <button 
-        onClick={() => navigate(`/hotel/${hotel.hotelId}/reviews`)}
-        className="text-blue-600 hover:underline"
-    >
-        {hotel.reviewCount || '100+'} reviews
-    </button>
-</div>
+                        <div className="flex items-center text-sm text-gray-500 mb-3">
+                            <StarRating rating={hotel.rating || 5} size="small" />
+                            <span className="mx-1">•</span>
+                            <button 
+                                onClick={() => navigate(`/hotel/${hotel.hotelId}/reviews`)}
+                                className="text-blue-600 hover:underline"
+                            >
+                                {hotel.reviewCount || '100+'} reviews
+                            </button>
+                        </div>
                         
                         <p className="text-xs text-gray-700 mb-3 line-clamp-2">{hotel.description}</p>
                         
@@ -247,19 +251,34 @@ export default function HotelList() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
             {/* Navigation Bar */}
-            <nav className="bg-white shadow-sm py-4 px-6 flex justify-between items-center sticky top-0 z-10">
-                {/* Logo on left */}
+            <nav className="bg-white shadow-sm py-4 px-4 sm:px-6 flex justify-between items-center sticky top-0 z-10">
+                {/* Logo and mobile menu button */}
                 <div className="flex items-center">
-                    <div className="text-2xl font-bold text-blue-600 flex items-center">
-                        <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mr-2">
-                            <span className="text-white font-bold text-sm">CH</span>
+                    {/* Mobile menu button */}
+                    <button 
+                        onClick={toggleMobileMenu}
+                        className="md:hidden mr-3 p-1 rounded-md text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                        <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            {isMobileMenuOpen ? (
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            ) : (
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                            )}
+                        </svg>
+                    </button>
+                    
+                    {/* Logo */}
+                    <div className="text-xl sm:text-2xl font-bold text-blue-600 flex items-center">
+                        <div className="w-6 h-6 sm:w-8 sm:h-8 bg-blue-600 rounded-lg flex items-center justify-center mr-2">
+                            <span className="text-white font-bold text-xs sm:text-sm">CH</span>
                         </div>
-                        CozyHaven
+                        <span className="hidden sm:inline">CozyHaven</span>
                     </div>
                 </div>
 
-                {/* Search and Profile on right */}
-                <div className="flex items-center space-x-4">
+                {/* Desktop Search and Profile */}
+                <div className="hidden md:flex items-center space-x-4">
                     {/* Search Bar */}
                     <div className="w-64">
                         <div className="relative">
@@ -296,14 +315,93 @@ export default function HotelList() {
                         <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm font-medium">
                             {userName ? userName.charAt(0).toUpperCase() : 'U'}
                         </div>
-                        <span className="font-medium text-gray-700">{userName || 'User'}</span>
+                        <span className="font-medium text-gray-700 hidden lg:inline">{userName || 'User'}</span>
+                    </div>
+                </div>
+
+                {/* Mobile profile icon (visible on small screens) */}
+                <div className="md:hidden">
+                    <div 
+                        className="flex items-center cursor-pointer"
+                        onClick={handleProfileClick}
+                    >
+                        <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm font-medium">
+                            {userName ? userName.charAt(0).toUpperCase() : 'U'}
+                        </div>
                     </div>
                 </div>
             </nav>
 
+            {/* Mobile menu (visible when toggled) */}
+            {isMobileMenuOpen && (
+                <div className="md:hidden bg-white shadow-md px-4 py-3 border-t border-gray-200">
+                    {/* Mobile search bar */}
+                    <div className="mb-4">
+                        <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                            </div>
+                            <input
+                                type="text"
+                                placeholder="Search hotels..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="block w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm shadow-sm"
+                            />
+                            {searchTerm && (
+                                <button
+                                    onClick={() => setSearchTerm('')}
+                                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                                >
+                                    <svg className="h-4 w-4 text-gray-400 hover:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                    
+                    {/* Mobile user info */}
+                    <div className="pt-2 border-t border-gray-100">
+                        <div className="flex items-center">
+                            <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-medium mr-3">
+                                {userName ? userName.charAt(0).toUpperCase() : 'U'}
+                            </div>
+                            <div>
+                                <p className="font-medium text-gray-800">{userName || 'User'}</p>
+                                <p className="text-xs text-gray-500">View Profile</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Main Content */}
-            <div className="py-8 px-4">
+            <div className="py-6 px-4 sm:px-6">
                 <div className="max-w-7xl mx-auto">
+                    {/* Mobile-only search bar (visible when menu is closed) */}
+                    <div className="md:hidden mb-6">
+                        {!isMobileMenuOpen && (
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    </svg>
+                                </div>
+                                <input
+                                    type="text"
+                                    placeholder="Search hotels..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className="block w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm shadow-sm"
+                                    onClick={toggleMobileMenu}
+                                />
+                            </div>
+                        )}
+                    </div>
+
                     {filteredHotels.length === 0 ? (
                         <div className="text-center py-12">
                             <div className="mx-auto mb-4 text-gray-400">
@@ -329,7 +427,7 @@ export default function HotelList() {
                             )}
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
                             {filteredHotels.map(hotel => (
                                 <div key={hotel.hotelId} className="w-full h-full max-w-sm">
                                     <TiltCard hotel={hotel} />

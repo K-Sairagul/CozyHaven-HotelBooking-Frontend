@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://localhost:7274';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://cozyhavenapi-hccchdhha4c8hjg3.southindia-01.azurewebsites.net';
 
 export default function PaymentPage() {
     const { bookingId } = useParams();
@@ -42,68 +42,32 @@ export default function PaymentPage() {
     }, [bookingId, navigate]);
 
     const validateCardNumber = (number) => {
-        // Remove all non-digit characters
         const cleaned = number.replace(/\D/g, '');
-        
-        // Check for all zeros or other obvious fake patterns
-        if (/^0+$/.test(cleaned)) {
-            return 'Invalid card number';
-        }
-        
-        // Check for repeated digits (like 1111 1111 1111 1111)
-        if (/^(\d)\1{3}(\s?\1{4}){3}$/.test(number)) {
-            return 'Invalid card number';
-        }
-        
-        // Check if it's a valid length (typically 13-19 digits)
-        if (cleaned.length < 13 || cleaned.length > 19) {
-            return 'Card number must be between 13 and 19 digits';
-        }
-        
-        // Luhn algorithm check
+        if (/^0+$/.test(cleaned)) return 'Invalid card number';
+        if (/^(\d)\1{3}(\s?\1{4}){3}$/.test(number)) return 'Invalid card number';
+        if (cleaned.length < 13 || cleaned.length > 19) return 'Card number must be between 13 and 19 digits';
         let sum = 0;
         let shouldDouble = false;
-        
         for (let i = cleaned.length - 1; i >= 0; i--) {
             let digit = parseInt(cleaned.charAt(i));
-            
             if (shouldDouble) {
                 digit *= 2;
-                if (digit > 9) {
-                    digit -= 9;
-                }
+                if (digit > 9) digit -= 9;
             }
-            
             sum += digit;
             shouldDouble = !shouldDouble;
         }
-        
         return sum % 10 === 0 ? '' : 'Invalid card number';
     };
 
     const validateExpiryDate = (date) => {
         if (!date) return 'Expiry date is required';
-        
-        // Check format MM/YY
-        if (!/^\d{2}\/\d{2}$/.test(date)) {
-            return 'Invalid format. Use MM/YY';
-        }
-        
+        if (!/^\d{2}\/\d{2}$/.test(date)) return 'Invalid format. Use MM/YY';
         const [month, year] = date.split('/').map(Number);
-        
-        // Check month is valid (1-12)
-        if (month < 1 || month > 12) {
-            return 'Invalid month';
-        }
-        
-        // Check if card is expired
+        if (month < 1 || month > 12) return 'Invalid month';
         const currentYear = new Date().getFullYear() % 100;
         const currentMonth = new Date().getMonth() + 1;
-        
-        if (year < currentYear || (year === currentYear && month < currentMonth)) {
-            return 'Card has expired';
-        }
-        
+        if (year < currentYear || (year === currentYear && month < currentMonth)) return 'Card has expired';
         return '';
     };
 
@@ -117,32 +81,29 @@ export default function PaymentPage() {
         const { name, value } = e.target;
         let formattedValue = value;
 
-        // Format card number with spaces every 4 digits
         if (name === 'cardNumber') {
             formattedValue = value.replace(/\D/g, '')
                 .replace(/(\d{4})(?=\d)/g, '$1 ')
                 .trim()
                 .substring(0, 19);
-                
+            
             setValidationErrors(prev => ({
                 ...prev,
                 cardNumber: validateCardNumber(formattedValue.replace(/\s/g, ''))
             }));
         }
-        
-        // Format expiry date as MM/YY
+
         if (name === 'expiryDate') {
             formattedValue = value.replace(/\D/g, '')
                 .replace(/^(\d{2})/, '$1/')
                 .substring(0, 5);
-                
+            
             setValidationErrors(prev => ({
                 ...prev,
                 expiryDate: validateExpiryDate(formattedValue)
             }));
         }
-        
-        // Format CVC (only digits, max 4)
+
         if (name === 'cvc') {
             formattedValue = value.replace(/\D/g, '').substring(0, 4);
             setValidationErrors(prev => ({
@@ -156,21 +117,13 @@ export default function PaymentPage() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
-        // Validate all fields before submission
         const errors = {
             cardNumber: validateCardNumber(paymentData.cardNumber.replace(/\s/g, '')),
             expiryDate: validateExpiryDate(paymentData.expiryDate),
             cvc: validateCVC(paymentData.cvc)
         };
-        
         setValidationErrors(errors);
-        
-        // Check if any errors exist
-        if (Object.values(errors).some(error => error)) {
-            return;
-        }
-        
+        if (Object.values(errors).some(error => error)) return;
         setProcessing(true);
         setError('');
 
@@ -215,6 +168,16 @@ export default function PaymentPage() {
 
     return (
         <div className="container mx-auto px-4 py-8 max-w-2xl">
+            {/* Back to Booking button */}
+            <div className="mb-6">
+                <button
+                    onClick={() => navigate(`/booking/${bookingId}`)}
+                    className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium px-4 py-2 rounded-lg transition-all duration-300 shadow-sm hover:shadow-md"
+                >
+                    &larr; Back to Booking
+                </button>
+            </div>
+
             <h1 className="text-3xl font-bold text-gray-800 mb-8 text-center">Complete Payment</h1>
             
             <div className="bg-white rounded-xl shadow-md p-6 mb-8">

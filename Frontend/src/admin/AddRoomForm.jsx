@@ -19,7 +19,7 @@ const RoomForm = ({ userId, onRoomAdded }) => {
     const fetchHotels = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('https://localhost:7274/api/Hotel');
+        const response = await axios.get('https://cozyhavenapi-hccchdhha4c8hjg3.southindia-01.azurewebsites.net/api/Hotel');
         setHotels(response.data || []);
         setError(null);
       } catch (error) {
@@ -38,7 +38,7 @@ const RoomForm = ({ userId, onRoomAdded }) => {
       setSubmitting(true);
 
       const response = await axios.post(
-        'https://localhost:7274/api/Room',
+        'https://cozyhavenapi-hccchdhha4c8hjg3.southindia-01.azurewebsites.net/api/Room',
         { ...data, userId },
         {
           headers: {

@@ -24,8 +24,8 @@ const UserReviews = () => {
         const fetchReviews = async () => {
             try {
                 const [reviewsRes, ratingRes] = await Promise.all([
-                    axios.get(`https://localhost:7274/api/Reviews/hotel/${hotelId}`),
-                    axios.get(`https://localhost:7274/api/Reviews/average/${hotelId}`)
+                    axios.get(`https://cozyhavenapi-hccchdhha4c8hjg3.southindia-01.azurewebsites.net/api/Reviews/hotel/${hotelId}`),
+                    axios.get(`https://cozyhavenapi-hccchdhha4c8hjg3.southindia-01.azurewebsites.net/api/Reviews/average/${hotelId}`)
                 ]);
                 
                 setReviews(reviewsRes.data);
@@ -54,7 +54,7 @@ const UserReviews = () => {
             if (editingReview) {
                 // Update existing review
                 const response = await axios.put(
-                    `https://localhost:7274/api/Reviews/${editingReview.reviewId}`,
+                    `https://cozyhavenapi-hccchdhha4c8hjg3.southindia-01.azurewebsites.net/api/Reviews/${editingReview.reviewId}`,
                     {
                         rating: newReview.rating,
                         comment: newReview.comment,
@@ -76,7 +76,7 @@ const UserReviews = () => {
             } else {
                 // Create new review
                 const response = await axios.post(
-                    'https://localhost:7274/api/Reviews',
+                    'https://cozyhavenapi-hccchdhha4c8hjg3.southindia-01.azurewebsites.net/api/Reviews',
                     {
                         rating: newReview.rating,
                         comment: newReview.comment,
@@ -95,7 +95,7 @@ const UserReviews = () => {
 
             // Recalculate average rating
             const newAvgResponse = await axios.get(
-                `https://localhost:7274/api/Reviews/average/${hotelId}`
+                `https://cozyhavenapi-hccchdhha4c8hjg3.southindia-01.azurewebsites.net/api/Reviews/average/${hotelId}`
             );
             setAverageRating(newAvgResponse.data);
             
@@ -131,7 +131,7 @@ const UserReviews = () => {
         if (!window.confirm("Are you sure you want to delete this review?")) return;
 
         try {
-            await axios.delete(`https://localhost:7274/api/Reviews/${reviewId}`, {
+            await axios.delete(`https://cozyhavenapi-hccchdhha4c8hjg3.southindia-01.azurewebsites.net/api/Reviews/${reviewId}`, {
                 headers: {
                     'Authorization': `Bearer ${auth.token}`
                 }
@@ -141,7 +141,7 @@ const UserReviews = () => {
             
             // Recalculate average rating
             const newAvgResponse = await axios.get(
-                `https://localhost:7274/api/Reviews/average/${hotelId}`
+                `https://cozyhavenapi-hccchdhha4c8hjg3.southindia-01.azurewebsites.net/api/Reviews/average/${hotelId}`
             );
             setAverageRating(newAvgResponse.data);
         } catch (error) {

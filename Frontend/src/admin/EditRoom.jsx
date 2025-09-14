@@ -26,14 +26,14 @@ const EditRoom = () => {
     const fetchData = async () => {
       try {
         // Fetch room data
-        const roomResponse = await fetch(`https://localhost:7274/api/Room/${id}`);
+        const roomResponse = await fetch(`https://cozyhavenapi-hccchdhha4c8hjg3.southindia-01.azurewebsites.net/api/Room/${id}`);
         if (!roomResponse.ok) {
           throw new Error('Failed to fetch room data');
         }
         const roomData = await roomResponse.json();
 
         // Fetch hotels for the dropdown
-        const hotelsResponse = await fetch(`https://localhost:7274/api/Hotel`);
+        const hotelsResponse = await fetch(`https://cozyhavenapi-hccchdhha4c8hjg3.southindia-01.azurewebsites.net/api/Hotel`);
         if (!hotelsResponse.ok) {
           throw new Error('Failed to fetch hotels');
         }
@@ -79,7 +79,7 @@ const EditRoom = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`https://localhost:7274/api/Room/${id}`, {
+      const response = await fetch(`https://cozyhavenapi-hccchdhha4c8hjg3.southindia-01.azurewebsites.net/api/Room/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

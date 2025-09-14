@@ -1,6 +1,12 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-import { MagnifyingGlassIcon, FunnelIcon, XMarkIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline'
+import {
+  MagnifyingGlassIcon,
+  FunnelIcon,
+  XMarkIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
+} from '@heroicons/react/24/outline'
 
 const PaymentHistory = () => {
   const [payments, setPayments] = useState([])
@@ -12,23 +18,26 @@ const PaymentHistory = () => {
   const [dateRange, setDateRange] = useState({ start: '', end: '' })
   const [isFilterOpen, setIsFilterOpen] = useState(false)
 
-  // Fetch payment history
   useEffect(() => {
     const fetchPayments = async () => {
       setLoading(true)
       setError(null)
       try {
-        const response = await axios.get('https://localhost:7274/api/payment/history', {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
+        const response = await axios.get(
+          'https://cozyhavenapi-hccchdhha4c8hjg3.southindia-01.azurewebsites.net/api/payment/history',
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
           }
-        })
-        // Ensure response.data is an array and has valid data
-        const paymentData = Array.isArray(response.data) ? response.data.map(payment => ({
-          ...payment,
-          paymentDate: payment.paymentDate ? new Date(payment.paymentDate) : null
-        })) : []
-        
+        )
+        const paymentData = Array.isArray(response.data)
+          ? response.data.map((payment) => ({
+              ...payment,
+              paymentDate: payment.paymentDate ? new Date(payment.paymentDate) : null,
+            }))
+          : []
+
         setPayments(paymentData)
         setFilteredPayments(paymentData)
       } catch (error) {
@@ -43,41 +52,35 @@ const PaymentHistory = () => {
     fetchPayments()
   }, [])
 
-  // Apply filters whenever they change
   useEffect(() => {
     const applyFilters = () => {
       let results = [...payments]
 
-      // Apply search filter
       if (searchTerm) {
         const term = searchTerm.toLowerCase()
-        results = results.filter(payment => 
-          (payment.hotelName?.toLowerCase()?.includes(term)) ||
-          (payment.roomId?.toString()?.includes(term)) ||
-          (payment.paymentId?.toString()?.includes(term))
-  )}
-
-      // Apply status filter
-      if (statusFilter !== 'all') {
-        results = results.filter(payment => 
-          payment.paymentStatus?.toLowerCase() === statusFilter.toLowerCase())
+        results = results.filter(
+          (payment) =>
+            payment.hotelName?.toLowerCase()?.includes(term) ||
+            payment.roomId?.toString()?.includes(term) ||
+            payment.paymentId?.toString()?.includes(term)
+        )
       }
 
-      // Apply date range filter
+      if (statusFilter !== 'all') {
+        results = results.filter(
+          (payment) => payment.paymentStatus?.toLowerCase() === statusFilter.toLowerCase()
+        )
+      }
+
       if (dateRange.start || dateRange.end) {
         const startDate = dateRange.start ? new Date(dateRange.start) : null
         const endDate = dateRange.end ? new Date(dateRange.end) : null
-        
-        // Set time to end of day for end date
         if (endDate) {
           endDate.setHours(23, 59, 59, 999)
         }
-
-        results = results.filter(payment => {
+        results = results.filter((payment) => {
           if (!payment.paymentDate) return false
-          
           const paymentDate = payment.paymentDate
-          
           if (startDate && endDate) {
             return paymentDate >= startDate && paymentDate <= endDate
           } else if (startDate) {
@@ -95,20 +98,20 @@ const PaymentHistory = () => {
     applyFilters()
   }, [payments, searchTerm, statusFilter, dateRange])
 
-  const handleSearch = e => {
+  const handleSearch = (e) => {
     setSearchTerm(e.target.value)
   }
 
-  const handleStatusChange = e => {
+  const handleStatusChange = (e) => {
     setStatusFilter(e.target.value)
   }
 
-  const handleStartDateChange = e => {
-    setDateRange(prev => ({ ...prev, start: e.target.value }))
+  const handleStartDateChange = (e) => {
+    setDateRange((prev) => ({ ...prev, start: e.target.value }))
   }
 
-  const handleEndDateChange = e => {
-    setDateRange(prev => ({ ...prev, end: e.target.value }))
+  const handleEndDateChange = (e) => {
+    setDateRange((prev) => ({ ...prev, end: e.target.value }))
   }
 
   const clearFilters = () => {
@@ -117,7 +120,7 @@ const PaymentHistory = () => {
     setDateRange({ start: '', end: '' })
   }
 
-  const getStatusBadgeColor = status => {
+  const getStatusBadgeColor = (status) => {
     if (!status) return 'bg-gray-100 text-gray-800'
     switch (status.toLowerCase()) {
       case 'completed':
@@ -135,7 +138,6 @@ const PaymentHistory = () => {
     }
   }
 
-  // Format date for display
   const formatDate = (date) => {
     if (!date) return 'N/A'
     return date.toLocaleDateString('en-US', {
@@ -143,50 +145,52 @@ const PaymentHistory = () => {
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     })
   }
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
+        <header className="mb-8">
           <h1 className="text-2xl font-bold text-gray-900">Payment History</h1>
-          <p className="mt-1 text-sm text-gray-500">
-            View and manage all payment transactions
-          </p>
-        </div>
+          <p className="mt-1 text-sm text-gray-500">View and manage all payment transactions</p>
+        </header>
 
         {/* Search and Filter Bar */}
         <div className="bg-white rounded-lg shadow p-4 mb-6">
-          <div className="flex items-center justify-between">
-            {/* Search Bar - Left Side */}
-            <div className="relative w-full max-w-md">
+          <div className="flex flex-col md:flex-row md:items-center md:space-x-4 space-y-4 md:space-y-0">
+            {/* Search Bar */}
+            <div className="relative flex-1 max-w-full md:max-w-md">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
               </div>
               <input
                 type="text"
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="Search by hotel, room ID or payment ID"
                 value={searchTerm}
                 onChange={handleSearch}
+                aria-label="Search payments"
               />
               {searchTerm && (
                 <button
                   onClick={() => setSearchTerm('')}
                   className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  aria-label="Clear search"
                 >
                   <XMarkIcon className="h-5 w-5 text-gray-400 hover:text-gray-500" />
                 </button>
               )}
             </div>
 
-            {/* Filter Dropdown - Right Side */}
-            <div className="relative ml-4">
+            {/* Filters Toggle */}
+            <div className="relative">
               <button
                 onClick={() => setIsFilterOpen(!isFilterOpen)}
                 className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                aria-expanded={isFilterOpen}
+                aria-controls="filter-panel"
               >
                 <FunnelIcon className="mr-2 h-5 w-5 text-gray-500" />
                 Filters
@@ -197,12 +201,18 @@ const PaymentHistory = () => {
                 )}
               </button>
 
-              {/* Filter Dropdown Content */}
+              {/* Filter Panel */}
               {isFilterOpen && (
-                <div className="origin-top-right absolute right-0 mt-2 w-80 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+                <div
+                  id="filter-panel"
+                  className="origin-top-right absolute right-0 mt-2 w-80 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-20"
+                >
                   <div className="p-4 space-y-4">
                     <div>
-                      <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
+                      <label
+                        htmlFor="status"
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                      >
                         Payment Status
                       </label>
                       <select
@@ -222,7 +232,10 @@ const PaymentHistory = () => {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label htmlFor="startDate" className="block text-sm font-medium text-gray-700 mb-1">
+                        <label
+                          htmlFor="startDate"
+                          className="block text-sm font-medium text-gray-700 mb-1"
+                        >
                           From Date
                         </label>
                         <input
@@ -235,7 +248,10 @@ const PaymentHistory = () => {
                       </div>
 
                       <div>
-                        <label htmlFor="endDate" className="block text-sm font-medium text-gray-700 mb-1">
+                        <label
+                          htmlFor="endDate"
+                          className="block text-sm font-medium text-gray-700 mb-1"
+                        >
                           To Date
                         </label>
                         <input
@@ -250,12 +266,14 @@ const PaymentHistory = () => {
 
                     <div className="flex justify-between pt-2">
                       <button
+                        type="button"
                         onClick={clearFilters}
                         className="text-sm text-blue-600 hover:text-blue-800"
                       >
                         Clear all filters
                       </button>
                       <button
+                        type="button"
                         onClick={() => setIsFilterOpen(false)}
                         className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       >
@@ -277,6 +295,7 @@ const PaymentHistory = () => {
                   <button
                     onClick={() => setSearchTerm('')}
                     className="ml-1.5 inline-flex text-blue-400 hover:text-blue-600"
+                    aria-label="Clear search filter"
                   >
                     <XMarkIcon className="h-3 w-3" />
                   </button>
@@ -288,6 +307,7 @@ const PaymentHistory = () => {
                   <button
                     onClick={() => setStatusFilter('all')}
                     className="ml-1.5 inline-flex text-blue-400 hover:text-blue-600"
+                    aria-label="Clear status filter"
                   >
                     <XMarkIcon className="h-3 w-3" />
                   </button>
@@ -297,8 +317,9 @@ const PaymentHistory = () => {
                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                   From: {new Date(dateRange.start).toLocaleDateString()}
                   <button
-                    onClick={() => setDateRange(prev => ({ ...prev, start: '' }))}
+                    onClick={() => setDateRange((prev) => ({ ...prev, start: '' }))}
                     className="ml-1.5 inline-flex text-blue-400 hover:text-blue-600"
+                    aria-label="Clear start date filter"
                   >
                     <XMarkIcon className="h-3 w-3" />
                   </button>
@@ -308,8 +329,9 @@ const PaymentHistory = () => {
                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                   To: {new Date(dateRange.end).toLocaleDateString()}
                   <button
-                    onClick={() => setDateRange(prev => ({ ...prev, end: '' }))}
+                    onClick={() => setDateRange((prev) => ({ ...prev, end: '' }))}
                     className="ml-1.5 inline-flex text-blue-400 hover:text-blue-600"
+                    aria-label="Clear end date filter"
                   >
                     <XMarkIcon className="h-3 w-3" />
                   </button>
@@ -320,7 +342,7 @@ const PaymentHistory = () => {
         </div>
 
         {/* Payment Table */}
-        <div className="bg-white shadow rounded-lg overflow-hidden">
+        <div className="bg-white shadow rounded-lg overflow-x-auto">
           {loading ? (
             <div className="p-8 text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
@@ -329,7 +351,7 @@ const PaymentHistory = () => {
           ) : error ? (
             <div className="p-8 text-center">
               <p className="text-red-500">{error}</p>
-              <button 
+              <button
                 onClick={() => window.location.reload()}
                 className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
               >
@@ -337,85 +359,91 @@ const PaymentHistory = () => {
               </button>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Payment ID
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Hotel
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Room
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Amount
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Date
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredPayments.length > 0 ? (
-                    filteredPayments.map(payment => (
-                      <tr key={payment.paymentId} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                          #{payment.paymentId || 'N/A'}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {payment.hotelName || 'N/A'}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {payment.roomId || 'N/A'}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          ${payment.amountPaid ? payment.amountPaid.toFixed(2) : '0.00'}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {formatDate(payment.paymentDate)}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span
-                            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeColor(
-                              payment.paymentStatus
-                            )}`}
-                          >
-                            {payment.paymentStatus || 'N/A'}
-                          </span>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="6" className="px-6 py-4 text-center text-sm text-gray-500">
-                        {payments.length === 0 ? 'No payment history available' : 'No payments match your filters'}
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Payment ID
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Hotel
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Room
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Amount
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Date
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Status
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {filteredPayments.length > 0 ? (
+                  filteredPayments.map((payment) => (
+                    <tr key={payment.paymentId} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        #{payment.paymentId || 'N/A'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {payment.hotelName || 'N/A'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {payment.roomId || 'N/A'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${payment.amountPaid ? payment.amountPaid.toFixed(2) : '0.00'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {formatDate(payment.paymentDate)}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span
+                          className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeColor(
+                            payment.paymentStatus
+                          )}`}
+                        >
+                          {payment.paymentStatus || 'N/A'}
+                        </span>
                       </td>
                     </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          )}
-
-          {/* Pagination */}
-          {filteredPayments.length > 0 && (
-            <div className="bg-gray-50 px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
-              <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-                <div>
-                  <p className="text-sm text-gray-700">
-                    Showing <span className="font-medium">1</span> to{' '}
-                    <span className="font-medium">{filteredPayments.length}</span> of{' '}
-                    <span className="font-medium">{filteredPayments.length}</span> results
-                  </p>
-                </div>
-              </div>
-            </div>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan="6"
+                      className="px-6 py-4 text-center text-sm text-gray-500"
+                    >
+                      {payments.length === 0
+                        ? 'No payment history available'
+                        : 'No payments match your filters'}
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           )}
         </div>
       </div>

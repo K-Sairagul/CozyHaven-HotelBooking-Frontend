@@ -28,7 +28,7 @@ const AdminReviews = () => {
       setError(null);
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get('https://localhost:7274/api/reviews/all', {
+        const response = await axios.get('https://cozyhavenapi-hccchdhha4c8hjg3.southindia-01.azurewebsites.net/api/reviews/all', {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -65,7 +65,7 @@ const AdminReviews = () => {
     
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`https://localhost:7274/api/reviews/${reviewId}`, {
+      await axios.delete(`https://cozyhavenapi-hccchdhha4c8hjg3.southindia-01.azurewebsites.net/api/reviews/${reviewId}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }

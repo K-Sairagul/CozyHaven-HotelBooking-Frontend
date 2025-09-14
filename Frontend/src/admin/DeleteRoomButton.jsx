@@ -18,7 +18,7 @@ const DeleteRoomButton = ({ roomId, onDeleteSuccess }) => {
     
     try {
       const response = await axios.delete(
-        `https://localhost:7274/api/Room/${roomId}`,
+        `https://cozyhavenapi-hccchdhha4c8hjg3.southindia-01.azurewebsites.net/api/Room/${roomId}`,
         {
           headers: {
             'Authorization': `Bearer ${token}`

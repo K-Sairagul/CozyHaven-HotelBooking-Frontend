@@ -11,7 +11,7 @@ const BookingList = () => {
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const response = await fetch(`https://localhost:7274/api/booking/details`, {
+        const response = await fetch(`https://cozyhavenapi-hccchdhha4c8hjg3.southindia-01.azurewebsites.net/api/booking/details`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
           }

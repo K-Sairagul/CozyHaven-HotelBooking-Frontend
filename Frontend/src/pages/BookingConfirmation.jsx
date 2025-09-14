@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://localhost:7274';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://cozyhavenapi-hccchdhha4c8hjg3.southindia-01.azurewebsites.net';
 
 export default function BookingConfirmation() {
     const { bookingId } = useParams();

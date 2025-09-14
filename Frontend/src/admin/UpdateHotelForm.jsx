@@ -40,7 +40,7 @@ const UpdateHotelForm = () => {
           throw new Error('Invalid hotel ID');
         }
 
-        const response = await axios.get(`https://localhost:7274/api/Hotel/${id}`, {
+        const response = await axios.get(`https://cozyhavenapi-hccchdhha4c8hjg3.southindia-01.azurewebsites.net/api/Hotel/${id}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -129,7 +129,7 @@ const UpdateHotelForm = () => {
 
   try {
     await axios.put(
-      `https://localhost:7274/api/Hotel/${id}`,
+      `https://cozyhavenapi-hccchdhha4c8hjg3.southindia-01.azurewebsites.net/api/Hotel/${id}`,
       formData,
       {
         headers: {
